@@ -46,11 +46,13 @@ namespace ShoutBlast
 
     static void OnSignal(int s)
     {
+#if defined(SB_PLATFORM_UNIX)
         if(s == SIGPIPE)
         {
             printf("Broken pipe\n");
             return;
         }
+#endif
     }
 
     bool SSL_library_load(void)
@@ -73,9 +75,9 @@ namespace ShoutBlast
         if (libraryPath.size() > 0)
         {
         #if defined(SB_PLATFORM_LINUX) && 0
-            pLibCryptoHandle = Runtime::LoadLibrary("./libcrypto.so.3");
+            pLibCryptoHandle = Runtime::LoadLibraryFromPath("./libcrypto.so.3");
         #endif
-            pLibraryHandle = Runtime::LoadLibrary(libraryPath);
+            pLibraryHandle = Runtime::LoadLibraryFromPath(libraryPath);
             
             if(!pLibraryHandle)
             {

@@ -18,7 +18,7 @@
 
 namespace ShoutBlast
 {
-	void *Runtime::LoadLibrary(const std::string &filePath)
+	void *Runtime::LoadLibraryFromPath(const std::string &filePath)
 	{
 		if (!std::filesystem::exists(std::filesystem::path(filePath)))
 		{
