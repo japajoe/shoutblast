@@ -1,20 +1,18 @@
 vec3 get_gradient(vec2 uv, float frequency)
 {
-    // Define 3-stop colors
-    vec3 colorLow  = vec3(0.0, 0.5, 1.0); // Cyan/Blue
-    vec3 colorMid  = vec3(0.9, 0.1, 0.8); // Hot Pink
-    vec3 colorHigh = vec3(1.0, 0.9, 0.5); // Golden White for peaks
+    vec3 colorLow  = vec3(0.0, 0.4, 0.8);  // Azure
+    vec3 colorMid  = vec3(0.3, 0.7, 1.0);  // Sky Blue
+    vec3 colorHigh = vec3(0.8, 0.95, 1.0); // Ice Blue/White
 
-    // Calculate relative height (0.0 to 1.0) 
-    // Max check to prevent division by zero
     float h = clamp(uv.y / max(frequency, 0.001), 0.0, 1.0);
 
-    // Two-step mix for a 3-color transition
-    vec3 barColor = mix(
-        mix(colorLow, colorMid, h), 
-        colorHigh, 
-        pow(h, 3.0) // Only show the 'White' at the very top peaks
-    );
+    vec3 barColor = mix(colorLow, colorMid, h);
+
+    if (h > 0.5)
+    {
+        float t = (h - 0.5) / 0.5;
+        barColor = mix(barColor, colorHigh, t * t);
+    }
 
     return barColor;
 }
