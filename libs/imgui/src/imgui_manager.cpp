@@ -4,6 +4,8 @@
 #include "imgui_impl_opengl3.h"
 #include "../../glfw/include/GLFW/glfw3.h"
 #include "../../../include/Embedded/RobotoRegular.hpp"
+#include "../../../include/Embedded/ImGuiIni.hpp"
+#include "../../../include/Utilities/File.hpp"
 #include <cstring>
 
 namespace ImGui::Manager
@@ -44,6 +46,9 @@ namespace ImGui::Manager
         std::strcpy(fontConfig.Name, "Roboto Regular");
         void *pFontData = (void*)ShoutBlast::GetFontData();
         io.FontDefault = io.Fonts->AddFontFromMemoryTTF(pFontData, ShoutBlast::GetFontSize(), 15.0f, &fontConfig);
+
+        if(!ShoutBlast::File::Exists("imgui.ini"))
+            ImGui::LoadIniSettingsFromMemory(ShoutBlast::GetImGuiIniData().data());
     }
 
     void Destroy()
