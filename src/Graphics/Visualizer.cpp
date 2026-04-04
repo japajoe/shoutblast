@@ -17,7 +17,7 @@ namespace ShoutBlast
         width = 2;
         height = 2;
         vao = 0;
-        mode = VisualizerMode::TimeDomain;
+        mode = VisualizerMode::FrequencyDomain;
     }
 
     void Visualizer::Generate()
