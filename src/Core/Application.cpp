@@ -45,10 +45,6 @@ namespace ShoutBlast
         //     std::cout << "Disconnected\n";
         // };
 
-        //stream.Play("https://ice1.somafm.com/fluid-128-mp3");
-        stream.Play("https://usa20.fastcast4u.com:3960/;?icy=https");
-        currentStation = "Real Nigga Radio";
-
         visualizer.Generate();
 
         textEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
