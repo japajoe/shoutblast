@@ -36,16 +36,7 @@ namespace ShoutBlast
             SetTitle(title.c_str());
         };
 
-        // stream.onConnected = [this] (const std::unordered_map<std::string,std::string> &headers) {
-        //     for(const auto& [key,value] : headers)
-        //         std::cout << key << ": " << value << '\n';
-        // };
-
-        // stream.onDisconnected = [this] () {
-        //     std::cout << "Disconnected\n";
-        // };
-
-        visualizer.Generate();
+        visualizer.Initialize();
 
         textEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
 		textEditor.SetShowHorizontalScrollbar(false);

@@ -35,7 +35,7 @@ namespace ShoutBlast
     {
     public:
         Visualizer();
-        void Generate();
+        void Initialize();
         void OnUpdate(AudioBuffer *audioBuffer);
         void OnGUI();
         bool CompileShader(const std::string &fragmentSource, std::string &error);

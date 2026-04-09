@@ -20,7 +20,7 @@ namespace ShoutBlast
         mode = VisualizerMode::FrequencyDomain;
     }
 
-    void Visualizer::Generate()
+    void Visualizer::Initialize()
     {
         FrameBufferTextureSpecification colorAttachment = {
             .format = FrameBufferTextureFormat::RGBA8,
