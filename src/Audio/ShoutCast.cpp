@@ -12,14 +12,12 @@ namespace ShoutBlast
         picojson::value v;
         std::string err = picojson::parse(v, json);
 
-        // 1. Check for basic parse errors
         if (!err.empty()) 
         {
             std::cerr << "Error: " << err << std::endl;
             return {};
         }
 
-        // 2. Ensure the root is an array
         if (!v.is<picojson::array>()) 
         {
             std::cerr << "JSON is not an array" << std::endl;

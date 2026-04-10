@@ -206,17 +206,14 @@ namespace ShoutBlast
                 ImGui::TableHeadersRow();
 
                 int i = 0;
-                for (auto& station : stations)
+                for (auto &station : stations)
                 {
-                    // 1. Push a unique ID for this specific row based on loop index
                     ImGui::PushID(i); 
 
                     ImGui::TableNextRow();
                     
                     ImGui::TableSetColumnIndex(0);
                     
-                    // We still compare against station.ID for your logic, 
-                    // but ImGui now sees this Selectable as unique due to PushID
                     bool isSelected = (selectedStationId == station.ID);
                     
                     if (ImGui::Selectable(station.Name.c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns))
@@ -239,7 +236,6 @@ namespace ShoutBlast
                     ImGui::TableSetColumnIndex(3);
                     ImGui::Text("%d", station.Listeners);
 
-                    // 2. Pop the ID to clean up the stack for the next iteration
                     ImGui::PopID();
                     i++;
                 }
@@ -298,7 +294,6 @@ namespace ShoutBlast
         {
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-            // Apply selection highlighting
             if (selectedGenreId == genre.id)
             {
                 flags |= ImGuiTreeNodeFlags_Selected;
@@ -309,21 +304,17 @@ namespace ShoutBlast
                 flags |= ImGuiTreeNodeFlags_Leaf;
             }
 
-            // Use the ID as the unique identifier for ImGui's internal state
             bool isOpen = ImGui::TreeNodeEx((void*)(intptr_t)genre.id, flags, "%s", genre.name.c_str());
 
-            // Update selection when the label is clicked
             if (ImGui::IsItemClicked())
             {
                 selectedGenreId = genre.id;
-                // You can also trigger your station loading here
             }
 
             if (isOpen)
             {
                 if (!genre.subGenres.empty())
                 {
-                    // Pass the selection reference down the stack
                     DrawGenres(genre.subGenres, selectedGenreId);
                 }
                 ImGui::TreePop();
@@ -389,28 +380,20 @@ namespace ShoutBlast
 
     Genre* Application::FindGenreById(std::vector<Genre>& genres, uint32_t id)
     {
-        for (auto& genre : genres)
+        for (auto &genre : genres)
         {
-            // Check if this is the genre we are looking for
             if (genre.id == id)
-            {
                 return &genre;
-            }
 
-            // If not, recursively search through this genre's sub-genres
             if (!genre.subGenres.empty())
             {
                 Genre* found = FindGenreById(genre.subGenres, id);
                 
-                // If the recursive call found a match, return it up the stack
                 if (found != nullptr)
-                {
                     return found;
-                }
             }
         }
 
-        // If the loop finishes without a match at this level or below, return nullptr
         return nullptr;
     }
 
