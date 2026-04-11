@@ -151,14 +151,10 @@ namespace ShoutBlast
         {
             float raw = timeDomainData[i];
 
-            // The "Smoothing" math: 
-            // New Value = (60% of the Old Value) + (40% of the New Value)
             float smoothed = (historySample * smoothness) + (raw * (1.0f - smoothness));
 
-            // Update history so the NEXT iteration knows what happened here
             historySample = smoothed;
 
-            // Interleave into your buffer
             audioData[i].timeDomain = smoothed; 
         }
     }
@@ -172,33 +168,24 @@ namespace ShoutBlast
         const float falloffSpeed = 0.92f;
         for(size_t i = 0; i < n; i++)
         {
-            // 1. Calculate raw magnitude
             float mag = std::abs(frequencyDomainData[i]) / static_cast<float>(n);
 
-            // 2. Convert to Decibels
-            // We use 1e-6 to avoid log10(0) which is -infinity
             float db = 20.0f * std::log10(mag + 1e-6f);
 
-            // 3. Normalize to [0, 1] range based on our -60dB floor
             float target = (db - minDb) / (-minDb);
             target = std::max(0.0f, std::min(target, 1.0f));
 
-            // 4. Frequency Tilt (Boost Highs)
-            // Raw FFTs are naturally "heavy" in the low end
             float tilt = static_cast<float>(i) / static_cast<float>(n / 2);
             target *= (1.0f + tilt * 2.0f);
 
-            // 5. Temporal Smoothing (The manual 'mix')
             float current = audioData[i].frequencyDomain;
 
             if (target > current)
             {
-                // Attack: Move toward the target
                 audioData[i].frequencyDomain = current + (target - current) * attackSpeed;
             }
             else
             {
-                // Release: Drift down slowly
                 audioData[i].frequencyDomain = current * falloffSpeed;
             }
 
@@ -229,7 +216,7 @@ namespace ShoutBlast
                 beatPhase -= 1.0f;
         }
 
-        pingpongBuffer.dst->Bind(); //Frame buffer
+        pingpongBuffer.dst->Bind();
         pingpongBuffer.dst->Clear(0, 0, 0, 1);
         
         shader.Use();
@@ -319,18 +306,16 @@ out vec4 FragColor;
 
     float Visualizer::CalculateBpm(const std::vector<std::complex<float>>& currentFrame, const std::vector<std::complex<float>>& previousFrame)
     {
-        // 1. Persistent State
         static const int historySize = 43;
         static float fluxHistory[historySize] = { 0.0f };
         static int writeIndex = 0;
         static float runningSum = 0.0f;
         
-        static long long beatTimestamps[16] = { 0 }; // Increased buffer for better averaging
+        static long long beatTimestamps[16] = { 0 };
         static int beatIndex = 0;
         static int beatCount = 0;
         static float smoothedBpm = 0.0f;
 
-        // 2. Calculate Spectral Flux
         float currentFlux = 0.0f;
         size_t lowFreqLimit = std::min(currentFrame.size() / 2, (size_t)40); 
 
@@ -343,7 +328,6 @@ out vec4 FragColor;
             }
         }
 
-        // 3. Update Moving Average
         runningSum -= fluxHistory[writeIndex];
         fluxHistory[writeIndex] = currentFlux;
         runningSum += currentFlux;
@@ -351,7 +335,6 @@ out vec4 FragColor;
 
         float avgFlux = runningSum / (float)historySize;
 
-        // 4. Adaptive Threshold (Stricter detection)
         if (currentFlux > avgFlux * 2.2f) 
         {
             auto now = std::chrono::steady_clock::now();
@@ -375,7 +358,6 @@ out vec4 FragColor;
             return 0.0f;
         }
 
-        // 5. Calculate Raw BPM from Median
         float intervals[15];
         int intervalCount = beatCount - 1;
         for (int i = 0; i < intervalCount; i++)
@@ -389,7 +371,6 @@ out vec4 FragColor;
         float medianIntervalMs = intervals[intervalCount / 2];
         float rawBpm = 60000.0f / medianIntervalMs;
 
-        // 6. Low-Pass Filter (The Stabilizer)
         // 0.05 is the "Lerp" factor. Lower = more stable but slower to react.
         if (smoothedBpm == 0.0f)
         {
